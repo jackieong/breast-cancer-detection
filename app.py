@@ -30,7 +30,7 @@ class PredictionInput(BaseModel):
 
 # Define output structure
 class PredictionOutput(BaseModel):
-    prediction: int
+    prediction: str
     probability: float
 
 @app.get("/")
@@ -58,9 +58,14 @@ async def predict(data: PredictionInput):
         # Make prediction
         prediction = model.predict(features)[0]
         probability = model.predict_proba(features)[0].max()
+
+        if int(prediction) == 0:
+            pred_tumor = "Malignant"
+        elif int(prediction) == 1:
+            pred_tumor = "Benign"
         
         return PredictionOutput(
-            prediction=int(prediction),
+            prediction=pred_tumor,
             probability=float(probability)
         )
     
